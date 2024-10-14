@@ -1,35 +1,59 @@
-import { useState } from 'react'
+import { useState, memo} from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const App=()=> {
+  const [inputfields,setInputFields]=useState([{value:''}]);
+
+  // function to update the value of the input field
+  const handleValueChange =(index,event)=>{
+    const values=[...inputfields]
+    values[index].value=event.target.value;
+    setInputFields(values)
+  }
+
+  // function to add new input fields 
+  const handleAddFields=()=>{
+    setInputFields([...inputfields,{value:""}]);
+  }
+
+// function to remove input field by index
+const handleRemoveFields=(index)=>{
+  const newInputFields=[...inputfields];
+  newInputFields.splice(index,1);
+  setInputFields(newInputFields)
+};
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+  <div className='container'>
+    <h2>Dynamic Input Fields</h2>
+   
+    {inputfields && inputfields.map((inputfield,index)=>{
+      return(
+      <div className="input-container" key={index}>
+        <input 
+        type="text" 
+        placeholder='Enter a value'
+        value={inputfield.value}
+        onChange={(e)=>handleValueChange(index,e)}
+        />
+        <button className="delete-btn" onClick={()=>handleRemoveFields(index)}>
+          <span className="material-symbols-outlined delete-icon">delete</span>
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      )}
+      
+    
+    )}
+    <button className="add-btn" onClick={handleAddFields}>
+      <span className="material-symbols-outlined add-icon">add</span>
+      Add field
+    </button>
+
+    
+  </div>
   )
 }
 
-export default App
+export default memo(App)
